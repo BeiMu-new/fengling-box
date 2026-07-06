@@ -1,6 +1,6 @@
 {
   "name": "fengling-box",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "枫铃工具箱 — 多功能命令行工具箱，含多源聚合搜索（内置anysearch无需额外安装）、文件批处理、图片处理、信源核实、token计算、二维码生成、文件服务器等功能",
   "main": "src/index.js",
   "type": "module",
