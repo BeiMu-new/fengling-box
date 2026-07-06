@@ -230,6 +230,10 @@ flb config delete tavily.key
 - 新增命令：`flb commit` — AI 生成 Git commit message（框架）
 - 新增命令：`flb ascii <图片>` — 图片转 ASCII 字符画
 - anysearch 引擎改为直接调用 API，不再依赖外部命令
+- **README更新：** 移除"依赖 smart-search 的搜索源"过时章节
+
+**v1.0.6**
+- 修复README更新日志未同步到npm的问题
 
 **v1.0.4**
 - 新增 4 个搜索源：reddit, hackernews, crates, gopkg
