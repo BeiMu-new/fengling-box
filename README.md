@@ -129,15 +129,9 @@ flb search engines --detail
 - 配置Token可提高限额到5000次/小时：`flb config set github.token <your-token>`
 - Token申请：https://github.com/settings/tokens
 
-### 📌 依赖 smart-search 的搜索源
+### 📌 anysearch（AI聚合搜索）
 
-**anysearch** 需要先安装 smart-search 才能使用：
-
-```bash
-npm install -g @konbakuyomu/smart-search
-```
-
-安装后无需额外配置，直接可用。
+anysearch 已内置在 flb 中，无需额外安装任何依赖，直接可用。
 
 ### 📁 文件 (file)
 
