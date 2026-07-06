@@ -227,6 +227,16 @@ flb config delete tavily.key
 
 ## 更新日志
 
+**v1.0.5**
+- 🎯 **anysearch 内置** — 不再需要额外安装 `@konbakuyomu/smart-search`，装 flb 直接用
+- 新增命令：`flb tokens <文本>` — 统计中英文 token 数
+- 新增命令：`flb cost <tokens>` — Token 用量分布（缓存命中/未命中/输出）
+- 新增命令：`flb serve [port]` — 当前目录启动 HTTP 文件服务器
+- 新增命令：`flb qr <文字>` — 终端生成二维码
+- 新增命令：`flb commit` — AI 生成 Git commit message（框架）
+- 新增命令：`flb ascii <图片>` — 图片转 ASCII 字符画
+- anysearch 引擎改为直接调用 API，不再依赖外部命令
+
 **v1.0.4**
 - 新增 4 个搜索源：reddit, hackernews, crates, gopkg
 - 新增功能：搜索结果导出（--out）
