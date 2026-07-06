@@ -1,52 +1,98 @@
 import { defineEngine } from './_base.js'
-import { execSync } from 'child_process'
-import chalk from 'chalk'
+import axios from 'axios'
 
 export default defineEngine({
   name: 'anysearch',
-  description: 'AnySearch AI聚合搜索（需要安装 smart-search）',
+  description: 'AnySearch AI聚合搜索（内置，无需额外安装）',
   stability: 'stable',
   async search(query, options = {}) {
     const limit = options.limit || 10
-    // 检查 smart-search 是否可用
-    let cmd
+    const apiUrl = process.env.ANYSEARCH_API_URL || 'https://api.anysearch.com/mcp'
+    const apiKey = process.env.ANYSEARCH_API_KEY || ''
+    const timeout = parseInt(process.env.ANYSEARCH_TIMEOUT || '30')
+
     try {
-      // Windows下需要用cmd /c
-      const isWin = process.platform === 'win32'
-      const command = isWin
-        ? `smart-search anysearch-search "${query.replace(/"/g, '\\"')}"`
-        : `smart-search anysearch-search "${query.replace(/"/g, '\\"')}"`
-      const output = execSync(command, {
-        encoding: 'utf-8',
-        timeout: 30000,
-        shell: true,
-        stdio: ['ignore', 'pipe', 'pipe']
-      })
-      // 解析 smart-search 返回的 JSON
-      const parsed = JSON.parse(output)
-      if (!parsed.ok) throw new Error(parsed.error || 'anysearch 返回错误')
-      // smart-search 的结果格式化在 content 或 results 里
-      const results = parsed.results || []
-      if (results.length > 0) {
-        return results.slice(0, limit).map(item => ({
-          title: item.title || item.name || '',
-          url: item.url || '',
-          snippet: item.description || item.content || item.snippet || '',
-        }))
+      const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/event-stream',
       }
-      // 从 content 里解析（回退）
-      const content = parsed.content || ''
-      const matches = [...content.matchAll(/### \d+\.\s(.+?)\n- \*\*URL\*\*:\s(.+?)\n-\s(.+?)(?=\n###|\n---|\n$|$)/gs)]
-      return matches.slice(0, limit).map(m => ({
-        title: m[1].trim(),
-        url: m[2].trim(),
-        snippet: m[3].trim().replace(/\n/g, ' ').substring(0, 300),
+      if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`
+
+      const payload = {
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'tools/call',
+        params: {
+          name: 'search',
+          arguments: { query, max_results: Math.min(limit, 5) },
+        },
+      }
+
+      const res = await axios.post(apiUrl, payload, {
+        headers,
+        timeout: timeout * 1000,
+      })
+
+      const data = res.data
+      if (data.error) {
+        throw new Error(data.error.message || 'AnySearch JSON-RPC error')
+      }
+      const result = data.result || {}
+      const text = extractText(result)
+      const parsed = parseMarkdownResults(text)
+      return (parsed.length > 0 ? parsed : extractUrls(text)).slice(0, limit).map(item => ({
+        title: item.title || item.url || '',
+        url: item.url || '',
+        snippet: item.description || '',
       }))
     } catch (e) {
-      if (e.message.includes('ENOENT') || e.message.includes('not recognized') || e.message.includes('command not found')) {
-        throw new Error('未找到 smart-search 命令，请先安装：npm install -g @konbakuyomu/smart-search')
+      if (e.response?.status === 401 || e.response?.status === 403) {
+        throw new Error('AnySearch 认证失败，请检查 ANYSEARCH_API_KEY')
       }
-      throw e
+      if (e.code === 'ECONNABORTED') {
+        throw new Error(`AnySearch 请求超时 (${timeout}s)`)
+      }
+      throw new Error(`AnySearch 搜索失败: ${e.message}`)
+    }
+  },
+})
+
+function extractText(result) {
+  const content = result.content || []
+  if (Array.isArray(content)) {
+    return content.map(item => (typeof item.text === 'string' ? item.text : '')).join('\n').trim()
+  }
+  if (typeof content === 'string') return content.trim()
+  return ''
+}
+
+function parseMarkdownResults(text) {
+  const results = []
+  let current = null
+  for (const line of text.split('\n')) {
+    const heading = line.match(/^###\s+\d+\.\s+(.+?)\s*$/)
+    if (heading) {
+      if (current) results.push(current)
+      current = { title: heading[1].trim(), url: '', description: '' }
+      continue
+    }
+    if (!current) continue
+    const urlMatch = line.match(/^-\s+\*\*URL\*\*:\s+(\S+)/)
+    if (urlMatch) {
+      current.url = urlMatch[1].trim()
+      continue
+    }
+    if (line.trim() && !line.startsWith('#') && !line.startsWith('- **URL**')) {
+      current.description = (current.description + ' ' + line.trim()).trim()
     }
   }
-})
+  if (current) results.push(current)
+  if (results.length > 0) return results
+  // fallback: extract URLs
+  return []
+}
+
+function extractUrls(text) {
+  const urls = [...text.matchAll(/https?:\/\/[^\s)>\]]+/g)]
+  return [...new Map(urls.map(u => [u[0], { title: u[0], url: u[0], description: '' }])).values()]
+}

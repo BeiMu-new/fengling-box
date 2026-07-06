@@ -6,6 +6,11 @@ import { registerVerify } from './commands/verify.js'
 import { registerData } from './commands/data.js'
 import { registerConfig } from './commands/config.js'
 import { registerTool } from './commands/tool.js'
+import { registerTokens } from './commands/tokens.js'
+import { registerServe } from './commands/serve.js'
+import { registerQR } from './commands/qr.js'
+import { registerCommit } from './commands/commit.js'
+import { registerASCII } from './commands/ascii.js'
 import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
@@ -28,6 +33,11 @@ export function createProgram() {
   registerData(program)
   registerConfig(program)
   registerTool(program)
+  registerTokens(program)
+  registerServe(program)
+  registerQR(program)
+  registerCommit(program)
+  registerASCII(program)
 
   return program
 }
