@@ -2,6 +2,8 @@
 
 ## v1.0.7（2026-07-06）
 - 移除 README 中「依赖 smart-search 的搜索源」过时章节
+- 更新 `daily_news_workflow.md`：注明 anysearch 已内置在 flb 中
+- 更新 `MEMORY.md`：去掉了 smart-search 安装记录
 - 更新日志补充 v1.0.6 / v1.0.7 条目
 
 ## v1.0.6（2026-07-06）
