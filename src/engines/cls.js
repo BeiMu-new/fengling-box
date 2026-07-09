@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export default defineEngine({
   name: 'cls',
-  description: '财联社搜索（财经资讯）',
+  description: '财联社搜索（财经资讯，API需前端环境，可能无结果）',
   stability: 'stable',
   async search(query, options = {}) {
     const limit = options.limit || 10
