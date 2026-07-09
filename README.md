@@ -221,7 +221,29 @@ flb config delete tavily.key
 
 ## 更新日志
 
-**v1.0.5**
+**v1.0.9**
+- 📝 补齐所有版本（v1.0.0~v1.0.9）更新日志
+- 📦 GitHub Releases 上传 v1.0.0~v1.0.9 全部安装包
+- 🔧 修正 author 为 BeiMu-new
+
+**v1.0.8**
+- 🔧 修复 ithome 搜索源：搜索页面已下线，改用 RSS + 关键词过滤
+- 🔧 修复 douban 搜索源：suggest API 已下线，改用 search.douban.com HTML 解析
+- 🔧 修复 thepaper 搜索源：API 地址迁移至 api.thepaper.cn/search/web/news
+- ⚠️ cctv 搜索：搜索结果由 JS 动态加载，服务器端直接请求无法获取，已更新描述
+- ⚠️ cls 搜索：API 需要前端环境，服务器端请求返回异常，已更新描述
+- 🔧 修正 package.json 中 author 为 BeiMu-new
+
+**v1.0.7**
+- 移除 README 中「依赖 smart-search 的搜索源」过时章节
+- 更新 daily_news_workflow.md：注明 anysearch 已内置在 flb 中
+- 更新日志补充 v1.0.6 / v1.0.7 条目
+
+**v1.0.6**
+- 修复 v1.0.5 发布后 README 更新日志未同步到 npm 的问题
+- 版本号因 v1.0.5 已 unpublish 而顺延
+
+**v1.0.5**（已 unpublish，功能由 v1.0.6+ 接替）
 - 🎯 **anysearch 内置** — 不再需要额外安装 `@konbakuyomu/smart-search`，装 flb 直接用
 - 新增命令：`flb tokens <文本>` — 统计中英文 token 数
 - 新增命令：`flb cost <tokens>` — Token 用量分布（缓存命中/未命中/输出）
@@ -230,10 +252,6 @@ flb config delete tavily.key
 - 新增命令：`flb commit` — AI 生成 Git commit message（框架）
 - 新增命令：`flb ascii <图片>` — 图片转 ASCII 字符画
 - anysearch 引擎改为直接调用 API，不再依赖外部命令
-- **README更新：** 移除"依赖 smart-search 的搜索源"过时章节
-
-**v1.0.6**
-- 修复README更新日志未同步到npm的问题
 
 **v1.0.4**
 - 新增 4 个搜索源：reddit, hackernews, crates, gopkg
