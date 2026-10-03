@@ -25,6 +25,12 @@ export default defineEngine({
       throw new Error(`DuckDuckGo 请求失败: HTTP ${res.status}`)
     }
     const html = await res.text()
+    // 202 = DDG 的反爬空壳页（不返回结果也不报错），显式抛错，避免被静默当成「没有结果」
+    if (res.status === 202 || !/result-link/.test(html)) {
+      if (res.status === 202) {
+        throw new Error('DuckDuckGo 返回反爬空壳页（HTTP 202）——当前出口 IP 已被限流，换网络或稍后重试')
+      }
+    }
     const $ = cheerio.load(html)
 
     // lite 页结构：<a class="result-link" href="//duckduckgo.com/l/?uddg=真实URL">标题</a>

@@ -222,6 +222,11 @@ flb config delete tavily.key
 ## 更新日志
 
 **v1.1.0**
+- 🔧 修复 kr36 搜索源：旧接口 `/api/search/articles` 已被 36氪下线（返回 "PpController handler class cannot be loaded"）；改用其前端实际调用的网关接口 `/api/mis/nav/search/resultbytype`，并按官方 `genGatewayParams()` 规则构造参数（siteId=1 / platformId=2 + timestamp）
+- 🔧 修复 toutiao 搜索源：旧接口 `/api/search/content/` 已不再返回结果；改为解析服务端渲染的 `so.toutiao.com` 搜索页结果卡片（`cr-params`），并由 gid 还原正文链接
+- ⚠️ yandex 搜索源：去掉「名为 Yandex、实为 DuckDuckGo 后端」的旧实现，改为真正请求 Yandex 本站；机房/异常出口 IP 触发人机验证时给出明确报错（住宅网络下正常）
+- ⚠️ thepaper 搜索源：接口对机房/高频 IP 统一返回 `99998 系统繁忙`，现会明确报错而非静默返回空结果
+- ⚠️ duckduckgo 搜索源：被 DDG 反爬限流（HTTP 202 空壳页）时明确报错，不再静默返回空
 - 🔧 修复 wikipedia 搜索源：Wikimedia 对无 User-Agent 请求直接返回 403，现显式声明 UA（官方要求）
 - 🔧 修复 bing 搜索源：旧实现实际请求的是 DuckDuckGo 后端（名实不符）且已被反爬，现改为请求真正的 Bing，并自动解码 `bing.com/ck/a?u=a1...` 跳转链接
 - 🔧 修复 duckduckgo 搜索源：`html.duckduckgo.com` 已对脚本请求返回 202 空壳页；改用 `lite.duckduckgo.com` 端点 + Node 原生 `fetch`（axios 的 TLS 指纹会被识别）
