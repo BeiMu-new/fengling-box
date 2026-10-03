@@ -62,12 +62,12 @@ flb search engines
 flb search engines --detail
 ```
 
-**可用搜索源（42个）：**
+**可用搜索源（43个）：**
 
 | 类别 | 搜索源 |
 |------|--------|
 | 通用 | baidu, bing, duckduckgo, brave*, yandex, google*, searx |
-| AI聚合 | anysearch, tavily*, exa* |
+| AI聚合 | anysearch, tavily*, exa*, metaso |
 | 中文 | weibo, zhihu, bilibili, douyin, toutiao |
 | 新闻 | xinhua, cctv, thepaper, kr36, huxiu, ithome, cls |
 | 技术 | github, npm, pypi, stackoverflow, crates, gopkg |
@@ -220,6 +220,14 @@ flb config delete tavily.key
 | `--dry-run` | 预览模式，不实际执行 |
 
 ## 更新日志
+
+**v1.1.0**
+- 🔧 修复 wikipedia 搜索源：Wikimedia 对无 User-Agent 请求直接返回 403，现显式声明 UA（官方要求）
+- 🔧 修复 bing 搜索源：旧实现实际请求的是 DuckDuckGo 后端（名实不符）且已被反爬，现改为请求真正的 Bing，并自动解码 `bing.com/ck/a?u=a1...` 跳转链接
+- 🔧 修复 duckduckgo 搜索源：`html.duckduckgo.com` 已对脚本请求返回 202 空壳页；改用 `lite.duckduckgo.com` 端点 + Node 原生 `fetch`（axios 的 TLS 指纹会被识别）
+- 🔧 修复 pypi 搜索源：`pypi.org/search` 已改为纯前端渲染（服务端只回 JS 空壳），HTML 解析失效；改用官方 JSON API 精确查询（支持空格分隔的多个包名）
+- 🔧 修复 baidu 搜索源：百度改版导致 `div.result` 选择器失效，现改用 `div.c-container` 多选择器兜底，并自动剔除 `baidu.php` 广告跳转位
+- 📝 修正搜索源总数（42 → 43），补齐 `metaso` 条目
 
 **v1.0.9**
 - 📝 补齐所有版本（v1.0.0~v1.0.9）更新日志

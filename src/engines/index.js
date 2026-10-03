@@ -41,6 +41,7 @@ import reddit from './reddit.js'
 import hackernews from './hackernews.js'
 import crates from './crates.js'
 import gopkg from './gopkg.js'
+import metaso from './metaso.js'
 
 export const engines = {
   anysearch,
@@ -85,6 +86,7 @@ export const engines = {
   stackoverflow,
   semanticscholar,
   googlescholar,
+  metaso,
 }
 
 export function getEngine(name) {
